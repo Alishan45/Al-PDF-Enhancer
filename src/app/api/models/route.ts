@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   const availability = {
-    gemini: true, // Always available with free API key
+    gemini: !!process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'dummy_key_for_testing',
     openai: !!process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'dummy_key_for_testing',
     claude: !!process.env.ANTHROPIC_API_KEY && process.env.ANTHROPIC_API_KEY !== 'dummy_key_for_testing',
   };
@@ -12,31 +12,37 @@ export async function GET() {
       id: 'gemini-2.0-flash-exp',
       name: 'Gemini 2.0 Flash (Experimental)',
       provider: 'Google',
-      status: 'FREE • LATEST',
-      statusColor: 'green',
-      available: true,
+      status: availability.gemini ? 'AVAILABLE' : 'API KEY REQUIRED',
+      statusColor: availability.gemini ? 'green' : 'orange',
+      available: availability.gemini,
       isDefault: true,
-      description: 'Latest experimental Gemini model with enhanced capabilities (free)',
+      description: availability.gemini 
+        ? 'Latest experimental Gemini model with enhanced capabilities' 
+        : 'Latest experimental Gemini model (requires API key)',
     },
     {
       id: 'gemini-1.5-flash-latest',
       name: 'Gemini 1.5 Flash (Latest)',
       provider: 'Google',
-      status: 'FREE • UPDATED',
-      statusColor: 'green',
-      available: true,
+      status: availability.gemini ? 'AVAILABLE' : 'API KEY REQUIRED',
+      statusColor: availability.gemini ? 'green' : 'orange',
+      available: availability.gemini,
       isDefault: false,
-      description: 'Latest Gemini 1.5 Flash with most recent updates (free)',
+      description: availability.gemini 
+        ? 'Latest Gemini 1.5 Flash with most recent updates' 
+        : 'Latest Gemini 1.5 Flash (requires API key)',
     },
     {
       id: 'gemini-1.5-flash',
       name: 'Gemini 1.5 Flash',
       provider: 'Google',
-      status: 'FREE • STABLE',
-      statusColor: 'green',
-      available: true,
+      status: availability.gemini ? 'AVAILABLE' : 'API KEY REQUIRED',
+      statusColor: availability.gemini ? 'green' : 'orange',
+      available: availability.gemini,
       isDefault: false,
-      description: 'Fast, reliable Gemini model for most use cases (free)',
+      description: availability.gemini 
+        ? 'Fast, reliable Gemini model for most use cases' 
+        : 'Fast, reliable Gemini model (requires API key)',
     },
     {
       id: 'openai',

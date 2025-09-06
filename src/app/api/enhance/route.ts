@@ -13,11 +13,14 @@ const anthropic = process.env.ANTHROPIC_API_KEY ? new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY!,
 }) : null;
 
-// Gemini setup with the free API key
-const gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyAvXWuNwwBtBnnJK1N261oWbYsEpgJp2FA');
+// Gemini setup - requires API key from environment
+const gemini = process.env.GEMINI_API_KEY ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY) : null;
 
 // Function to get the appropriate Gemini model
 function getGeminiModel(modelName: string) {
+  if (!gemini) {
+    throw new Error('Gemini API key not configured');
+  }
   return gemini.getGenerativeModel({ model: modelName });
 }
 
@@ -165,6 +168,10 @@ async function processWithClaude(prompt: string, _options: ProcessingOptions): P
 }
 
 async function processWithGemini(prompt: string, options: ProcessingOptions): Promise<string> {
+  if (!gemini || !process.env.GEMINI_API_KEY) {
+    throw new Error('Gemini API key not configured. Please set GEMINI_API_KEY in your environment variables.');
+  }
+
   try {
     const modelName = options.model;
     const geminiModel = getGeminiModel(modelName);
